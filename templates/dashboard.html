@@ -1,179 +1,99 @@
-<!DOCTYPE html>
-<html lang="es">
+{% extends "base.html" %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema Logístico</title>
+{% block title %}Dashboard{% endblock %}
+{% block header %}Dashboard Principal{% endblock %}
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="{{ url_for('static', filename='src/styles.css') }}">
-</head>
+{% block content %}
 
-<body>
+    <!-- TARJETAS KPI -->
+    <div class="row g-4">
 
-    <!-- MENU LATERAL -->
-
-    <div class="sidebar">
-
-        <h3> PELUQUERIA MARY   </h3>
-
-
-        <a href="/usuarios"> Usuarios</a>
-
-        <a href="/kardex"> Kardex</a>
-
-        <a href="/productos"> Productos</a>
-
-        <a href="/reportes"> Reportes</a>
-
-        <a href="/logout"> Cerrar Sesión</a>
-
-    </div>
-
-    <!-- CONTENIDO -->
-
-    <div class="content">
-
-        <!-- BARRA SUPERIOR -->
-
-        <div class="topbar d-flex justify-content-between align-items-center">
-
-            <h4>Dashboard Principal</h4>
-
-            <div>
-                Bienvenido:
-                <strong>{{ usuario }}</strong>
+        <div class="col-md-3">
+            <div class="card card-kpi tilt">
+                <div class="card-body text-center">
+                    <div class="card-icon">📦</div>
+                    <h5>Productos</h5>
+                    <div class="number">{{ total_productos }}</div>
+                    <small>Registrados</small>
+                </div>
             </div>
-
         </div>
 
-        <div class="container-fluid mt-4">
-
-            <!-- TARJETAS KPI -->
-
-            <div class="row g-4">
-
-                <div class="col-md-3">
-                    <div class="card card-kpi">
-                        <div class="card-body text-center">
-                            <div class="card-icon">📦</div>
-
-                            <h5>Productos</h5>
-
-                            <div class="number">
-                                {{ total_productos }}
-                            </div>
-
-                            <small>Registrados</small>
-                        </div>
-                    </div>
+        <div class="col-md-3">
+            <div class="card card-kpi tilt">
+                <div class="card-body text-center">
+                    <div class="card-icon">📥</div>
+                    <h5>Entradas</h5>
+                    <div class="number">{{ entradas_hoy }}</div>
+                    <small>Hoy</small>
                 </div>
-
-                <div class="col-md-3">
-                    <div class="card card-kpi">
-                        <div class="card-body text-center">
-                            <div class="card-icon">📥</div>
-
-                            <h5>Entradas</h5>
-
-                            <div class="number">
-                                {{ entradas_hoy }}
-                            </div>
-
-                            <small>Hoy</small>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-3">
-                    <div class="card card-kpi">
-                        <div class="card-body text-center">
-                            <div class="card-icon">📤</div>
-
-                            <h5>Salidas</h5>
-
-                            <div class="number">
-                                {{ salidas_hoy }}
-                            </div>
-
-                            <small>Hoy</small>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-3">
-                    <div class="card card-kpi">
-                        <div class="card-body text-center">
-                            <div class="card-icon">⚠️</div>
-
-                            <h5>Stock Bajo</h5>
-
-                            <div class="number">
-                                {{ stock_bajo }}
-                            </div>
-
-                            <small>Productos</small>
-                        </div>
-                    </div>
-                </div>
-
             </div>
+        </div>
 
-            <!-- TABLA -->
-
-            <div class="row mt-5">
-
-                <div class="col-12">
-
-                    <div class="table-container">
-
-                        <h4 class="mb-4">
-                            Últimos Movimientos
-                        </h4>
-
-                        <table class="table table-hover">
-
-                            <thead class="table-primary">
-
-                                <tr>
-                                    <th>Fecha</th>
-                                    <th>SKU</th>
-                                    <th>Producto</th>
-                                    <th>Tipo</th>
-                                    <th>Cantidad</th>
-                                </tr>
-
-                            </thead>
-
-                            <tbody>
-
-                                {% for mov in movimientos %}
-
-                                <tr>
-                                    <td>{{ mov.fecha }}</td>
-                                    <td>{{ mov.sku }}</td>
-                                    <td>{{ mov.producto }}</td>
-                                    <td>{{ mov.tipo }}</td>
-                                    <td>{{ mov.cantidad }}</td>
-                                </tr>
-
-                                {% endfor %}
-
-                            </tbody>
-
-                        </table>
-
-                    </div>
-
+        <div class="col-md-3">
+            <div class="card card-kpi tilt">
+                <div class="card-body text-center">
+                    <div class="card-icon">📤</div>
+                    <h5>Salidas</h5>
+                    <div class="number">{{ salidas_hoy }}</div>
+                    <small>Hoy</small>
                 </div>
-
             </div>
+        </div>
 
+        <div class="col-md-3">
+            <div class="card card-kpi tilt">
+                <div class="card-body text-center">
+                    <div class="card-icon">⚠️</div>
+                    <h5>Stock Bajo</h5>
+                    <div class="number">{{ stock_bajo }}</div>
+                    <small>Productos</small>
+                </div>
+            </div>
         </div>
 
     </div>
 
-</body>
+    <!-- ULTIMOS MOVIMIENTOS -->
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="table-container">
+                <h4 class="mb-4">Ultimos Movimientos</h4>
 
-</html>
+                <table class="table table-hover align-middle">
+                    <thead class="table-primary">
+                        <tr>
+                            <th>Fecha</th>
+                            <th>SKU</th>
+                            <th>Producto</th>
+                            <th>Tipo</th>
+                            <th class="text-end">Cantidad</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for mov in movimientos %}
+                        <tr>
+                            <td>{{ mov.fecha }}</td>
+                            <td>{{ mov.sku }}</td>
+                            <td>{{ mov.producto }}</td>
+                            <td>
+                                {% if mov.tipo == 'Entrada' %}
+                                    <span class="badge bg-success">Entrada</span>
+                                {% else %}
+                                    <span class="badge bg-danger">Salida</span>
+                                {% endif %}
+                            </td>
+                            <td class="text-end">{{ mov.cantidad }}</td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="5" class="text-center text-muted">Sin movimientos registrados.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block title %}Usuario{% endblock %}
+{% block header %}Mi Usuario{% endblock %}
+
+{% block content %}
+
+    <div class="row g-4">
+
+        <!-- DATOS DEL USUARIO -->
+        <div class="col-md-5">
+            <div class="card card-kpi tilt">
+                <div class="card-body text-center p-4">
+                    <div class="user-avatar"><i class="bi bi-person-fill"></i></div>
+                    <h4 class="mb-1">{{ perfil.NombreCompleto }}</h4>
+                    <span class="badge bg-primary mb-3">{{ perfil.Rol }}</span>
+
+                    <ul class="list-group list-group-flush text-start mt-2">
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span class="text-muted">Usuario</span>
+                            <strong>{{ perfil.Usuario }}</strong>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span class="text-muted">Rol</span>
+                            <strong>{{ perfil.Rol }}</strong>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span class="text-muted">Estado</span>
+                            <strong>{{ perfil.Estado }}</strong>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span class="text-muted">Registrado</span>
+                            <strong>{{ perfil.FechaRegistro }}</strong>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- CAMBIO DE CONTRASENA -->
+        <div class="col-md-7">
+            <div class="table-container">
+                <h4 class="mb-4"><i class="bi bi-shield-lock"></i> Cambiar contrasena</h4>
+
+                <form method="POST" action="{{ url_for('cambiar_password') }}">
+                    <div class="mb-3">
+                        <label class="form-label">Contrasena actual</label>
+                        <input type="password" name="actual" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Nueva contrasena</label>
+                        <input type="password" name="nueva" class="form-control" required>
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label">Confirmar nueva contrasena</label>
+                        <input type="password" name="confirmar" class="form-control" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check-lg"></i> Actualizar contrasena
+                    </button>
+                </form>
+            </div>
+        </div>
+
+    </div>
+
+{% endblock %}

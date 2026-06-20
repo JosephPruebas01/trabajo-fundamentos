@@ -90,70 +90,45 @@ Incluye la licencia del proyecto aquí (por ejemplo, MIT) y un correo o referenc
 
 Si quieres que adapte el README a un estilo más formal, añada secciones de despliegue u otro idioma, dímelo y lo actualizo.
 
-## Despliegue con Docker
+## Ejecutar todo con Docker
 
-Aquí tienes instrucciones básicas para contenerizar y ejecutar la aplicación con Docker.
+El `docker-compose.yml` levanta el sistema completo con un solo comando:
 
-### Dockerfile (ejemplo)
-
-```
-FROM python:3.11-slim
-WORKDIR /app
-
-# Copiar archivos de requisitos si existen
-COPY requirements.txt ./
-RUN pip install --no-cache-dir -r requirements.txt || true
-
-# Copiar el código de la aplicación
-COPY . .
-
-EXPOSE 5000
-
-CMD ["python", "app.py"]
+```bash
+docker compose up --build
 ```
 
-Notas:
-- Ajusta la versión de Python si tu proyecto lo requiere.
-- Si no usas `requirements.txt`, elimina la línea `RUN pip install...` y gestiona dependencias de otra forma.
+Arranca en orden, con healthchecks:
 
-### docker-compose (ejemplo)
+1. **sqlserver** — SQL Server 2022.
+2. **db-init** — crea la base `LogisticaDB`.
+3. **liquibase** — aplica el esquema y los datos de ejemplo (ver [liquibase/README.md](liquibase/README.md)).
+4. **app** — la aplicación Flask.
 
-```
-version: '3.8'
-services:
-	app:
-		build: .
-		ports:
-			- "5000:5000"
-		environment:
-			- FLASK_ENV=production
-		volumes:
-			- .:/app  # útil en desarrollo; elimínalo en producción
-```
+Luego abre **http://localhost:8000**.
 
-### Comandos comunes para el proyecto
+### Usuarios de ejemplo
 
-- Construir imagen:
+| Usuario    | Contraseña    | Rol      |
+|------------|---------------|----------|
+| `admin`    | `admin123`    | ADMIN    |
+| `operador` | `operador123` | OPERADOR |
 
-```
-docker build -t trabajo-fundamentos .
-```
+### Funcionalidades
 
-- Ejecutar con Docker:
+- **Login** con sesión y rutas protegidas.
+- **Dashboard** con KPIs (productos, entradas/salidas del día, stock bajo) y últimos movimientos.
+- **Usuario**: datos del perfil, rol y cambio de contraseña.
+- **Kardex**: detalle total de productos con resaltado de stock bajo.
+- **Productos**: búsqueda, alta de productos e ingresos/salidas (ajustan el stock en una transacción).
+- **Reportes**: filtros (movimientos o stock) con exportación a Excel.
+- Efectos 3D con **Vanta.js** (fondo animado) y **VanillaTilt** (tarjetas).
 
-```
-docker run -p 5000:5000 --env-file .env trabajo-fundamentos
-```
+### Notas
 
-- Levantar con docker-compose:
-
-```
-docker-compose up --build
-```
-
-### Buenas prácticas
-
-- Usa un archivo `.env` para variables sensibles y no lo subas al repositorio.
-- En producción, evita montar el código con `volumes:` y usa imágenes construidas reproduciblemente.
-- Considera usar un servidor de aplicaciones (Gunicorn, Uvicorn) si la app necesita escalado.
+- La app se ejecuta en `linux/amd64` (igual que SQL Server) e incluye el driver
+  `ODBC Driver 18`. La conexión se configura por variables de entorno (`DB_SERVER`,
+  `DB_USER`, etc.) en el servicio `app` del compose.
+- El puerto del host es **8000** (el 5000 suele estar ocupado por AirPlay en macOS).
+- Para empezar de cero: `docker compose down -v` y vuelve a `docker compose up --build`.
 

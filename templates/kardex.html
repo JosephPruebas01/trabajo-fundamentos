@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}Kardex{% endblock %}
+{% block header %}Kardex - Detalle de Productos{% endblock %}
+
+{% block content %}
+
+    <div class="table-container">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h4 class="m-0"><i class="bi bi-table"></i> Inventario completo</h4>
+            <span class="badge bg-secondary fs-6">{{ productos|length }} productos</span>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-primary">
+                    <tr>
+                        <th>SKU</th>
+                        <th>Producto</th>
+                        <th>Categoria</th>
+                        <th>Tamano</th>
+                        <th>Color</th>
+                        <th class="text-end">Stock</th>
+                        <th class="text-end">Minimo</th>
+                        <th class="text-end">P. Costo</th>
+                        <th class="text-end">P. Venta</th>
+                        <th class="text-center">Estado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for p in productos %}
+                    <tr class="{{ 'table-warning' if p.Critico }}">
+                        <td><code>{{ p.SKU }}</code></td>
+                        <td>{{ p.Nombre }}</td>
+                        <td>{{ p.Categoria }}</td>
+                        <td>{{ p.Tamano or '-' }}</td>
+                        <td>{{ p.Color or '-' }}</td>
+                        <td class="text-end fw-bold">{{ p.StockActual }}</td>
+                        <td class="text-end">{{ p.StockMinimo }}</td>
+                        <td class="text-end">{{ '%.2f'|format(p.PrecioCosto) }}</td>
+                        <td class="text-end">{{ '%.2f'|format(p.PrecioVenta) }}</td>
+                        <td class="text-center">
+                            {% if p.Critico %}
+                                <span class="badge bg-danger">Stock bajo</span>
+                            {% else %}
+                                <span class="badge bg-success">OK</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr><td colspan="10" class="text-center text-muted">No hay productos.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+{% endblock %}

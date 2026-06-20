@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+
+{% block title %}Reportes{% endblock %}
+{% block header %}Reportes{% endblock %}
+
+{% block content %}
+
+    <div class="table-container mb-4">
+        <h4 class="mb-4"><i class="bi bi-funnel"></i> Generar reporte</h4>
+
+        <form method="POST" action="{{ url_for('reportes') }}" id="formReporte">
+
+            <!-- Selector de tipo de reporte -->
+            <div class="mb-4">
+                <label class="form-label fw-bold">Tipo de reporte</label>
+                <div class="btn-group d-block" role="group">
+                    <input type="radio" class="btn-check" name="tipo_reporte" id="rMov" value="movimientos"
+                           {{ 'checked' if tipo_reporte != 'stock' }} onchange="toggleFiltros()">
+                    <label class="btn btn-outline-primary" for="rMov"><i class="bi bi-arrow-left-right"></i> Movimientos</label>
+
+                    <input type="radio" class="btn-check" name="tipo_reporte" id="rStock" value="stock"
+                           {{ 'checked' if tipo_reporte == 'stock' }} onchange="toggleFiltros()">
+                    <label class="btn btn-outline-primary" for="rStock"><i class="bi bi-boxes"></i> Stock actual</label>
+                </div>
+            </div>
+
+            <!-- Filtros de MOVIMIENTOS -->
+            <div id="filtrosMov" class="row g-3">
+                <div class="col-md-3">
+                    <label class="form-label">Desde</label>
+                    <input type="date" name="desde" value="{{ filtros.desde }}" class="form-control">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Hasta</label>
+                    <input type="date" name="hasta" value="{{ filtros.hasta }}" class="form-control">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Producto</label>
+                    <select name="producto" class="form-select">
+                        <option value="">Todos</option>
+                        {% for p in productos %}
+                        <option value="{{ p.IdProducto }}" {{ 'selected' if filtros.producto == p.IdProducto|string }}>
+                            {{ p.Nombre }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Tipo</label>
+                    <select name="tipo" class="form-select">
+                        <option value="">Todos</option>
+                        <option value="E" {{ 'selected' if filtros.tipo == 'E' }}>Entrada</option>
+                        <option value="S" {{ 'selected' if filtros.tipo == 'S' }}>Salida</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Filtros de STOCK -->
+            <div id="filtrosStock" class="row g-3" style="display:none;">
+                <div class="col-md-4">
+                    <label class="form-label">Solo stock bajo</label>
+                    <select name="solo_bajo" class="form-select">
+                        <option value="">No</option>
+                        <option value="1" {{ 'selected' if filtros.solo_bajo == '1' }}>Si</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Filtro comun: categoria -->
+            <div class="row g-3 mt-1">
+                <div class="col-md-3">
+                    <label class="form-label">Categoria</label>
+                    <select name="categoria" class="form-select">
+                        <option value="">Todas</option>
+                        {% for c in categorias %}
+                        <option value="{{ c.IdCategoria }}" {{ 'selected' if filtros.categoria == c.IdCategoria|string }}>
+                            {{ c.Nombre }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <div class="mt-4">
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-eye"></i> Generar vista previa
+                </button>
+                <button type="submit" class="btn btn-success" formaction="{{ url_for('exportar_reporte') }}">
+                    <i class="bi bi-file-earmark-excel"></i> Exportar a Excel
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- VISTA PREVIA -->
+    {% if encabezados is not none %}
+    <div class="table-container">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="m-0">Vista previa</h5>
+            <span class="badge bg-secondary fs-6">{{ filas|length }} filas</span>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-striped table-hover align-middle">
+                <thead class="table-primary">
+                    <tr>
+                        {% for h in encabezados %}<th>{{ h }}</th>{% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for fila in filas %}
+                    <tr>
+                        {% for valor in fila.values() %}<td>{{ valor }}</td>{% endfor %}
+                    </tr>
+                    {% else %}
+                    <tr><td colspan="{{ encabezados|length }}" class="text-center text-muted">
+                        Sin resultados para los filtros seleccionados.
+                    </td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endif %}
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+    function toggleFiltros() {
+        const esStock = document.getElementById('rStock').checked;
+        document.getElementById('filtrosMov').style.display = esStock ? 'none' : 'flex';
+        document.getElementById('filtrosStock').style.display = esStock ? 'flex' : 'none';
+    }
+    toggleFiltros();
+</script>
+{% endblock %}
