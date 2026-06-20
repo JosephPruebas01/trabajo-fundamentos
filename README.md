@@ -131,7 +131,7 @@ services:
 			- .:/app  # útil en desarrollo; elimínalo en producción
 ```
 
-### Comandos comunes
+### Comandos comunes para el proyecto
 
 - Construir imagen:
 
