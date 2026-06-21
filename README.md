@@ -1,18 +1,19 @@
-# Peluquería Mary — Sistema de Logística (versión simple, sin base de datos)
+# Peluquería Mary — Sistema de Logística (front JS + back Python, sin BD)
 
-Versión **ligera** del sistema de logística, pensada para ser lo **más simple
-posible**: corre 100% en el navegador, **sin servidor, sin Python y sin base de
-datos**. Los datos viven en memoria y se guardan en `localStorage` del navegador.
+Versión **ligera**: **JavaScript** en el front y **Python (Flask)** en el back,
+**sin base de datos** (los datos viven en memoria del servidor). Código mínimo,
+sin redundancias y con nombres claros.
 
-> Esta es la rama `feature/tst`. La versión completa (Flask + SQL Server +
-> Docker + Liquibase) está en la rama `feature/alex`.
+> Rama `feature/tst`. La versión completa (Flask + SQL Server + Docker + Liquibase)
+> está en `feature/alex`.
 
 ## ▶️ Cómo ejecutarlo
 
-**Solo abre el archivo `index.html`** con doble clic (o arrástralo al navegador).
-No necesitas instalar nada.
-
-> Recomendado: Chrome, Edge o Firefox actualizados.
+```bash
+pip install -r requirements.txt
+python app.py
+# abre: http://localhost:5000
+```
 
 ### Usuarios de ejemplo
 
@@ -21,42 +22,49 @@ No necesitas instalar nada.
 | `admin`    | `admin123`    | ADMIN    |
 | `operador` | `operador123` | OPERADOR |
 
-## ✨ Qué incluye
+## 🧩 Arquitectura (simple)
 
-Cumple **las mismas funciones** que la versión con base de datos:
+```
+Navegador (JS)  ──fetch──▶  Flask (app.py)  ──▶  datos en memoria
+   web/                       /api/...              (listas Python)
+```
 
-- **Login** y **cerrar sesión**.
-- **Dashboard** con KPIs animados (productos, entradas/salidas de hoy, stock bajo)
-  y últimos movimientos.
-- **Usuario**: datos del perfil, rol y **cambio de contraseña**.
-- **Kardex**: tabla con el detalle total de productos (resalta stock bajo).
-- **Productos**: búsqueda en vivo, alta de productos e **ingresos/salidas**
-  (validan el stock).
-- **Reportes**: filtros (movimientos o stock) con **exportación a Excel** (.xlsx).
-- Interacciones: modales, notificaciones *toast*, contadores animados, búsqueda
-  instantánea.
+- **Front** (`web/`): HTML + Bootstrap + JS. Pinta la interfaz y llama a la API.
+- **Back** (`app.py`): expone una API JSON, valida la lógica (ej. stock) y guarda
+  los datos en memoria. Sin base de datos.
 
-## 🎨 Diseño
+## 🔌 API
 
-- **Solo Bootstrap 5** + Bootstrap Icons + CSS propio. **Sin efectos 3D.**
-- Estilo vistoso con degradados violeta/rosa, tarjetas con hover y animaciones
-  ligeras en CSS (sin librerías 3D).
+| Método | Ruta | Para qué |
+|---|---|---|
+| POST | `/api/login` | Validar usuario/contraseña |
+| GET  | `/api/estado` | Traer categorías, productos y movimientos |
+| POST | `/api/productos` | Crear un producto |
+| POST | `/api/movimientos` | Registrar ingreso/salida (valida stock) |
+| POST | `/api/clave` | Cambiar contraseña |
+
+## ✨ Funcionalidades
+
+- **Login / cerrar sesión**.
+- **Dashboard** con KPIs animados + últimos movimientos.
+- **Usuario**: perfil, rol y **cambiar contraseña**.
+- **Kardex**: detalle total de productos (resalta stock bajo).
+- **Productos**: búsqueda en vivo, alta e **ingresos/salidas** (validan stock).
+- **Reportes**: filtros (movimientos o stock) + **exportar a Excel** (.xlsx).
 
 ## 📁 Estructura
 
 ```
-index.html        → toda la interfaz (login + secciones)
-assets/styles.css → estilos propios (degradados, tarjetas, sidebar)
-assets/app.js     → lógica: datos de ejemplo, navegación, CRUD, reportes, Excel
+app.py             → backend Flask (API + sirve el front), datos en memoria
+requirements.txt   → Flask
+web/index.html     → interfaz (login + secciones)
+web/styles.css     → estilos (degradados, sidebar, KPIs) — sin 3D
+web/app.js         → lógica del front: navegación, render, llamadas a la API
 ```
 
-## 🗂️ Sobre los datos
+## 🎨 Diseño
 
-- Al abrir por primera vez se cargan **datos de ejemplo**.
-- Tus cambios (productos, movimientos, contraseña) se guardan en `localStorage`.
-- El botón **↺** (arriba a la derecha) **restaura** los datos de ejemplo.
+Solo **Bootstrap 5** + Bootstrap Icons + CSS propio. **Sin efectos 3D.** Degradados
+violeta/rosa, tarjetas con hover, toasts y contadores animados (CSS/JS ligero).
 
-## 📦 Dependencias (vía CDN, no requieren instalación)
-
-- Bootstrap 5 y Bootstrap Icons (estilos e interacciones).
-- SheetJS (xlsx) para exportar a Excel. Si no hay internet, exporta en CSV.
+> Nota: los datos se reinician al reiniciar el servidor (no hay base de datos).

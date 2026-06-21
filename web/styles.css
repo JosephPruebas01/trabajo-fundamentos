@@ -1,29 +1,18 @@
-/* =========================================================
-   Peluquería Mary - estilos (solo Bootstrap + CSS, sin 3D)
-   Paleta vistosa: violeta -> rosa
-   ========================================================= */
+/* Peluquería Mary - estilos (solo Bootstrap + CSS, sin 3D). Paleta violeta -> rosa */
 :root{
     --grad: linear-gradient(135deg,#7b2ff7 0%,#e94b8a 100%);
-    --grad-soft: linear-gradient(135deg,#8a3ffb 0%,#f06aa0 100%);
-    --violet:#7b2ff7;
-    --pink:#e94b8a;
-    --ink:#2b2540;
-    --bg:#f4f1fb;
+    --violet:#7b2ff7; --pink:#e94b8a; --ink:#2b2540; --bg:#f4f1fb;
 }
-
 *{ font-family:"Segoe UI",system-ui,-apple-system,sans-serif; }
 body{ background:var(--bg); color:var(--ink); }
 
-/* ---- Logo / marca ---- */
 .brand-logo{
-    width:64px;height:64px;border-radius:18px;
-    background:var(--grad);color:#fff;
-    display:flex;align-items:center;justify-content:center;
-    font-size:30px;box-shadow:0 8px 20px rgba(123,47,247,.35);
+    width:64px;height:64px;border-radius:18px;background:var(--grad);color:#fff;
+    display:flex;align-items:center;justify-content:center;font-size:30px;
+    box-shadow:0 8px 20px rgba(123,47,247,.35);
 }
 .brand-logo.sm{ width:38px;height:38px;font-size:18px;border-radius:11px;box-shadow:none; }
 
-/* ---- Botón con gradiente ---- */
 .btn-gradient{
     background:var(--grad);color:#fff;border:none;font-weight:600;
     box-shadow:0 6px 16px rgba(123,47,247,.30);transition:.25s;
@@ -32,35 +21,26 @@ body{ background:var(--bg); color:var(--ink); }
     box-shadow:0 10px 22px rgba(123,47,247,.40); }
 .bg-gradient-primary{ background:var(--grad)!important; }
 
-/* =========================================================
-   LOGIN
-   ========================================================= */
+/* LOGIN */
 .login-screen{
     min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;
-    background:var(--grad);
-    position:relative;overflow:hidden;
+    background:var(--grad);position:relative;overflow:hidden;
 }
-/* burbujas decorativas animadas (CSS puro, no 3D) */
 .login-screen::before,.login-screen::after{
-    content:"";position:absolute;border-radius:50%;
-    background:rgba(255,255,255,.12);animation:float 9s ease-in-out infinite;
+    content:"";position:absolute;border-radius:50%;background:rgba(255,255,255,.12);
+    animation:float 9s ease-in-out infinite;
 }
 .login-screen::before{ width:340px;height:340px;top:-90px;left:-90px; }
 .login-screen::after{ width:260px;height:260px;bottom:-80px;right:-60px;animation-delay:2s; }
 @keyframes float{ 0%,100%{transform:translateY(0)} 50%{transform:translateY(-26px)} }
-
-.login-card{ width:100%;max-width:420px;border-radius:22px;position:relative;z-index:2;
-    animation:pop .5s ease; }
+.login-card{ width:100%;max-width:420px;border-radius:22px;position:relative;z-index:2;animation:pop .5s ease; }
 @keyframes pop{ from{opacity:0;transform:scale(.92) translateY(14px)} to{opacity:1;transform:none} }
 
-/* =========================================================
-   LAYOUT APP
-   ========================================================= */
+/* LAYOUT */
 .sidebar{
     position:fixed;top:0;left:0;width:260px;height:100vh;
-    background:linear-gradient(180deg,#5a189a,#9d2b6b);
-    color:#fff;display:flex;flex-direction:column;padding:18px 14px;z-index:1030;
-    transition:transform .3s ease;
+    background:linear-gradient(180deg,#5a189a,#9d2b6b);color:#fff;
+    display:flex;flex-direction:column;padding:18px 14px;z-index:1030;transition:transform .3s ease;
 }
 .sidebar-brand{ display:flex;align-items:center;gap:10px;font-weight:700;font-size:1.05rem;
     padding:6px 8px 18px;border-bottom:1px solid rgba(255,255,255,.18);margin-bottom:14px; }
@@ -71,10 +51,8 @@ body{ background:var(--bg); color:var(--ink); }
 }
 .sidebar .nav-link i{ font-size:1.1rem;width:20px;text-align:center; }
 .sidebar .nav-link:hover{ background:rgba(255,255,255,.14);color:#fff;transform:translateX(4px); }
-.sidebar .nav-link.active{ background:#fff;color:var(--violet);font-weight:700;
-    box-shadow:0 6px 14px rgba(0,0,0,.18); }
-.sidebar .nav-link.logout{ color:#ffd9e4;border-top:1px solid rgba(255,255,255,.18);
-    border-radius:12px;margin-top:8px;padding-top:14px; }
+.sidebar .nav-link.active{ background:#fff;color:var(--violet);font-weight:700;box-shadow:0 6px 14px rgba(0,0,0,.18); }
+.sidebar .nav-link.logout{ color:#ffd9e4;border-top:1px solid rgba(255,255,255,.18);margin-top:8px;padding-top:14px; }
 .sidebar .nav-link.logout:hover{ background:rgba(255,255,255,.14); }
 
 .main{ margin-left:260px;min-height:100vh; }
@@ -87,16 +65,12 @@ body{ background:var(--bg); color:var(--ink); }
 .user-chip .badge{ background:var(--grad);color:#fff; }
 .content{ padding:26px; }
 
-/* =========================================================
-   KPI cards
-   ========================================================= */
-.kpi{
-    background:#fff;border-radius:18px;padding:20px;display:flex;align-items:center;gap:16px;
-    box-shadow:0 6px 18px rgba(0,0,0,.07);transition:.25s;border-left:5px solid var(--violet);
-}
+/* KPIs */
+.kpi{ background:#fff;border-radius:18px;padding:20px;display:flex;align-items:center;gap:16px;
+    box-shadow:0 6px 18px rgba(0,0,0,.07);transition:.25s;border-left:5px solid var(--violet); }
 .kpi:hover{ transform:translateY(-6px);box-shadow:0 14px 28px rgba(0,0,0,.12); }
-.kpi-icon{ width:54px;height:54px;border-radius:14px;flex:none;
-    display:flex;align-items:center;justify-content:center;font-size:24px;color:#fff;background:var(--grad); }
+.kpi-icon{ width:54px;height:54px;border-radius:14px;flex:none;display:flex;align-items:center;
+    justify-content:center;font-size:24px;color:#fff;background:var(--grad); }
 .kpi-num{ font-size:2rem;font-weight:800;line-height:1; }
 .kpi-label{ color:#7a738f;font-size:.85rem;margin-top:4px; }
 .kpi-1{ border-left-color:#7b2ff7; } .kpi-1 .kpi-icon{ background:linear-gradient(135deg,#7b2ff7,#a06bff); }
@@ -104,23 +78,15 @@ body{ background:var(--bg); color:var(--ink); }
 .kpi-3{ border-left-color:#e94b8a; } .kpi-3 .kpi-icon{ background:linear-gradient(135deg,#d6336c,#e94b8a); }
 .kpi-4{ border-left-color:#f39c12; } .kpi-4 .kpi-icon{ background:linear-gradient(135deg,#e08e0b,#f4b740); }
 
-/* =========================================================
-   Paneles, tablas, avatar
-   ========================================================= */
+/* Paneles / tablas */
 .panel{ background:#fff;border-radius:18px;padding:22px;box-shadow:0 6px 18px rgba(0,0,0,.07); }
 .panel thead th{ color:#7a738f;text-transform:uppercase;font-size:.78rem;letter-spacing:.4px; }
 .table-warning-soft{ background:#fff6e6; }
-
-.avatar{ width:96px;height:96px;border-radius:50%;background:var(--grad);color:#fff;
-    display:flex;align-items:center;justify-content:center;font-size:48px;
-    box-shadow:0 10px 24px rgba(123,47,247,.35); }
-
+.avatar{ width:96px;height:96px;border-radius:50%;background:var(--grad);color:#fff;display:flex;
+    align-items:center;justify-content:center;font-size:48px;box-shadow:0 10px 24px rgba(123,47,247,.35); }
 .section-fade{ animation:fade .35s ease; }
 @keyframes fade{ from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:none} }
 
-/* =========================================================
-   Responsive (sidebar colapsable en móvil)
-   ========================================================= */
 @media (max-width:767.98px){
     .sidebar{ transform:translateX(-100%); }
     .sidebar.open{ transform:translateX(0); }
