@@ -1,0 +1,10 @@
+# Editor / SO
+.DS_Store
+.idea/
+.vscode/
+
+# Python (por si se prueba algo)
+__pycache__/
+*.py[cod]
+venv/
+.venv/
