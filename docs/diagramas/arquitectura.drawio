@@ -1,0 +1,71 @@
+<mxfile host="app.diagrams.net" type="device">
+  <diagram id="arquitectura-peluqueria" name="Arquitectura">
+    <mxGraphModel dx="1100" dy="700" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="700" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="titulo" value="Arquitectura - Sistema de Logistica Peluqueria Mary" style="text;html=1;align=center;verticalAlign=middle;fontSize=18;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="240" y="20" width="740" height="40" as="geometry" />
+        </mxCell>
+
+        <mxCell id="usuario" value="Usuario&#10;(navegador web)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#666666;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="40" y="300" width="140" height="80" as="geometry" />
+        </mxCell>
+
+        <mxCell id="host" value="Host con Docker (tu Mac o un VPS / cloud)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#999999;verticalAlign=top;fontStyle=1;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="240" y="90" width="780" height="540" as="geometry" />
+        </mxCell>
+
+        <mxCell id="red" value="Red interna de Docker" style="rounded=1;whiteSpace=wrap;html=1;dashed=1;fillColor=#e6f2ff;strokeColor=#3399ff;verticalAlign=top;fontStyle=2;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="280" y="160" width="560" height="430" as="geometry" />
+        </mxCell>
+
+        <mxCell id="app" value="app&#10;Flask + driver ODBC 18&#10;escucha el puerto 5000" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="320" y="220" width="210" height="100" as="geometry" />
+        </mxCell>
+
+        <mxCell id="sqlserver" value="sqlserver&#10;SQL Server 2022&#10;puerto 1433" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="600" y="210" width="180" height="120" as="geometry" />
+        </mxCell>
+
+        <mxCell id="dbinit" value="db-init&#10;crea la base LogisticaDB&#10;(corre 1 vez y se apaga)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="320" y="420" width="210" height="90" as="geometry" />
+        </mxCell>
+
+        <mxCell id="liquibase" value="liquibase&#10;crea tablas + datos de ejemplo&#10;(corre 1 vez y se apaga)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="590" y="420" width="220" height="90" as="geometry" />
+        </mxCell>
+
+        <mxCell id="volumen" value="Volumen&#10;mssql_data&#10;(datos que NO se borran)" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="880" y="230" width="120" height="120" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e1" value="HTTP  localhost:8000 -&gt; app:5000" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;fontSize=11;" edge="1" parent="1" source="usuario" target="app">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e2" value="consultas SQL (pyodbc, 1433)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;fontSize=11;" edge="1" parent="1" source="app" target="sqlserver">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e3" value="1) crea LogisticaDB" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;dashed=1;fontSize=11;" edge="1" parent="1" source="dbinit" target="sqlserver">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e4" value="2) esquema + seed" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;dashed=1;fontSize=11;" edge="1" parent="1" source="liquibase" target="sqlserver">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e5" value="persiste datos en disco" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=none;fontSize=11;" edge="1" parent="1" source="sqlserver" target="volumen">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="orden" value="Orden de arranque:  1) sqlserver (sano)  ->  2) db-init  ->  3) liquibase  ->  4) app" style="text;html=1;align=center;verticalAlign=middle;fontSize=12;fontStyle=2;fillColor=#fffde7;strokeColor=#d6b656;rounded=1;" vertex="1" parent="1">
+          <mxGeometry x="240" y="645" width="780" height="30" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

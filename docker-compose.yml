@@ -1,0 +1,79 @@
+services:
+  # ----------------------------------------------------------------
+  # Motor de base de datos: SQL Server 2022
+  # ----------------------------------------------------------------
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: logistica_sqlserver
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: "Logistica#2024"
+      MSSQL_PID: "Developer"
+    ports:
+      - "1433:1433"
+    volumes:
+      - mssql_data:/var/opt/mssql
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P \"$$MSSQL_SA_PASSWORD\" -C -Q 'SELECT 1' || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
+
+  # ----------------------------------------------------------------
+  # Crea la base LogisticaDB (Liquibase necesita que la BD ya exista)
+  # ----------------------------------------------------------------
+  db-init:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: logistica_db_init
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+    environment:
+      MSSQL_SA_PASSWORD: "Logistica#2024"
+    entrypoint:
+      - /bin/bash
+      - -c
+      - >
+        /opt/mssql-tools18/bin/sqlcmd -S sqlserver -U sa -P "$$MSSQL_SA_PASSWORD" -C
+        -Q "IF DB_ID('LogisticaDB') IS NULL CREATE DATABASE LogisticaDB;"
+
+  # ----------------------------------------------------------------
+  # Liquibase: aplica el changelog sobre LogisticaDB
+  # ----------------------------------------------------------------
+  liquibase:
+    image: liquibase/liquibase:4.31
+    container_name: logistica_liquibase
+    depends_on:
+      db-init:
+        condition: service_completed_successfully
+    volumes:
+      - ./liquibase:/liquibase/project
+    command: >
+      --defaults-file=/liquibase/project/liquibase.properties
+      update
+
+  # ----------------------------------------------------------------
+  # Aplicacion web Flask
+  # ----------------------------------------------------------------
+  app:
+    build: .
+    platform: linux/amd64
+    container_name: logistica_app
+    depends_on:
+      liquibase:
+        condition: service_completed_successfully
+    environment:
+      DB_SERVER: "sqlserver,1433"
+      DB_DATABASE: "LogisticaDB"
+      DB_USER: "sa"
+      DB_PASSWORD: "Logistica#2024"
+      SECRET_KEY: "Logistica2026"
+      FLASK_DEBUG: "1"
+    ports:
+      - "8000:5000"
+    volumes:
+      - .:/app
+
+volumes:
+  mssql_data:

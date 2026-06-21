@@ -1,0 +1,14 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# Entornos virtuales
+venv/
+.venv/
+env/
+
+# Editor / SO
+.DS_Store
+.idea/
+.vscode/
