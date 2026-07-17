@@ -92,68 +92,49 @@ Si quieres que adapte el README a un estilo más formal, añada secciones de des
 
 ## Despliegue con Docker
 
-Aquí tienes instrucciones básicas para contenerizar y ejecutar la aplicación con Docker.
+El `Dockerfile` de la raíz construye una imagen basada en `python:3.12-slim` que incluye el
+driver `ODBC Driver 18 for SQL Server` (necesario para `pyodbc`) y sirve la aplicación con
+Gunicorn en el puerto **8000**.
 
-### Dockerfile (ejemplo)
-
-```
-FROM python:3.11-slim
-WORKDIR /app
-
-# Copiar archivos de requisitos si existen
-COPY requirements.txt ./
-RUN pip install --no-cache-dir -r requirements.txt || true
-
-# Copiar el código de la aplicación
-COPY . .
-
-EXPOSE 5000
-
-CMD ["python", "app.py"]
-```
-
-Notas:
-- Ajusta la versión de Python si tu proyecto lo requiere.
-- Si no usas `requirements.txt`, elimina la línea `RUN pip install...` y gestiona dependencias de otra forma.
-
-### docker-compose (ejemplo)
-
-```
-version: '3.8'
-services:
-	app:
-		build: .
-		ports:
-			- "5000:5000"
-		environment:
-			- FLASK_ENV=production
-		volumes:
-			- .:/app  # útil en desarrollo; elimínalo en producción
-```
-
-### Comandos comunes
-
-- Construir imagen:
+Construir la imagen:
 
 ```
 docker build -t trabajo-fundamentos .
 ```
 
-- Ejecutar con Docker:
+Ejecutarla:
 
 ```
-docker run -p 5000:5000 --env-file .env trabajo-fundamentos
+docker run -p 8000:8000 -e DB_CONNECTION_STRING="..." trabajo-fundamentos
 ```
 
-- Levantar con docker-compose:
+La aplicación queda disponible en `http://localhost:8000`.
+
+### Conexión a la base de datos desde el contenedor
+
+`config.py` usa por defecto `(localdb)\FUNDAMENTOS` con `Trusted_Connection=yes`, que es
+autenticación integrada de Windows y **no funciona dentro del contenedor** (la imagen es
+Linux y LocalDB no es accesible desde ahí). Para desplegar hay que apuntar a una instancia
+real de SQL Server pasando la cadena completa por variable de entorno:
 
 ```
-docker-compose up --build
+docker run -p 8000:8000 \
+  -e DB_CONNECTION_STRING="DRIVER={ODBC Driver 18 for SQL Server};SERVER=mi-servidor,1433;DATABASE=LogisticaDB;UID=usuario;PWD=contraseña;TrustServerCertificate=yes;" \
+  trabajo-fundamentos
 ```
 
-### Buenas prácticas
+Sin esa variable, la app arranca y sirve la pantalla de login, pero el inicio de sesión
+fallará al intentar conectarse.
 
-- Usa un archivo `.env` para variables sensibles y no lo subas al repositorio.
-- En producción, evita montar el código con `volumes:` y usa imágenes construidas reproduciblemente.
-- Considera usar un servidor de aplicaciones (Gunicorn, Uvicorn) si la app necesita escalado.
+## Integración continua
+
+El workflow `.github/workflows/ci.yml` se ejecuta en cada push a `main`, `develop` y
+`feature/**`, y en cada pull request hacia `main` o `develop`. Comprueba tres cosas:
+
+1. **Lint** — `ruff check .` sobre todo el código.
+2. **Arranque** — instala las dependencias y verifica que la aplicación se importa y registra sus rutas.
+3. **Docker** — construye la imagen para garantizar que el `Dockerfile` sigue siendo válido.
+
+Los scripts `test_db.py` y `test_driver.py` no se ejecutan en CI porque requieren una base
+de datos SQL Server accesible.
 

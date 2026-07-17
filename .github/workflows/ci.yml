@@ -1,0 +1,54 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop, "feature/**"]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Instalar ruff
+        run: pip install ruff==0.8.4
+
+      - name: Revisar estilo y errores
+        run: ruff check .
+
+  smoke:
+    name: Instalar dependencias y verificar arranque
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      # pyodbc necesita la librería de unixODBC para poder importarse.
+      - name: Instalar unixODBC
+        run: sudo apt-get update && sudo apt-get install -y unixodbc
+
+      - name: Instalar dependencias
+        run: pip install -r requirements.txt
+
+      - name: Verificar que la aplicación se importa sin errores
+        run: python -c "import app; print('Rutas:', [str(r) for r in app.app.url_map.iter_rules()])"
+
+  docker:
+    name: Construir imagen Docker
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Construir imagen
+        run: docker build -t trabajo-fundamentos:${{ github.sha }} .
